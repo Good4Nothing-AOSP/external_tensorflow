@@ -203,7 +203,10 @@ cc_library_shared {
     ],
     header_libs: [
         "flatbuffer_headers",
+        "fp16_headers",
+        "gemmlowp_headers",
         "jni_headers",
+        "libeigen",
         "tensorflow_headers",
     ],
     static_libs: [
@@ -227,6 +230,57 @@ cc_library_shared {
         "//apex_available:platform",
         "com.android.adservices",
         "com.android.extservices",
+    ],
+}
+
+cc_library_shared {
+    name: "libtensorflowlite_xnnpack_jni",
+    sdk_version: "current",
+    min_sdk_version: "30",
+    export_include_dirs: [
+        "delegates/nnapi/java/src/main/native/",
+        "java/src/main/native/",
+    ],
+    srcs: [
+        "delegates/nnapi/java/src/main/native/*.cc",
+        "java/src/main/native/*.cc",
+        "tflite_with_xnnpack.cc",
+        "delegates/xnnpack/xnnpack_delegate.cc",
+        "delegates/xnnpack/quantization_util.cc",
+    ],
+    header_libs: [
+        "flatbuffer_headers",
+        "fp16_headers",
+        "gemmlowp_headers",
+        "jni_headers",
+        "libeigen",
+        "tensorflow_headers",
+    ],
+    include_dirs: [
+        "external/XNNPACK/include",
+        "external/XNNPACK/src",
+    ],
+    static_libs: [
+        "libruy_static",
+        "libtflite_static",
+        "libXNNPACK",
+        "libpthreadpool",
+    ],
+    shared_libs: [
+        "liblog",
+    ],
+    cflags: [
+        "-Wno-unused-function",
+        "-Wno-unused-parameter",
+        "-Wno-missing-field-initializers",
+    ],
+    ldflags: [
+        "-Wl,--undefined-version",
+    ],
+    version_script: "java/tflite_version_script.lds",
+    stl: "libc++_static",
+    apex_available: [
+        "//apex_available:platform",
     ],
 }
 
